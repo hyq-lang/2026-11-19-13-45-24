@@ -1,0 +1,356 @@
+/* ============================================================
+   GLOBAL TOKENS & RESET
+   暗色系 · 高级 · 克制 · 科技感
+   ============================================================ */
+
+:root {
+  /* 背景层级 */
+  --bg-0: #07080c;
+  --bg-1: #0b0c11;
+  --bg-2: #101218;
+  --surface: rgba(255, 255, 255, 0.028);
+  --surface-hover: rgba(255, 255, 255, 0.05);
+
+  /* 文本 */
+  --text: #ededf0;
+  --text-soft: #a6a9b4;
+  --text-muted: #6c6f7b;
+
+  /* 描边 */
+  --line: rgba(255, 255, 255, 0.09);
+  --line-strong: rgba(255, 255, 255, 0.16);
+
+  /* 强调色：暖珊瑚 + 深靛蓝氛围 */
+  --accent: #9b7cff;
+  --accent-2: #c9a7ff;
+  --accent-glow: rgba(155, 124, 255, 0.35);
+  --indigo: #303f9f;
+  --indigo-glow: rgba(72, 90, 220, 0.25);
+
+  /* 版心 */
+  --container: 1700px;
+  --pad-x: 64px;
+
+  /* 字体 */
+  --font-display: 'Space Grotesk', 'Manrope', system-ui, sans-serif;
+  --font-body: 'DM Sans', 'Manrope', system-ui, -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-color: #3a3d47 var(--bg-0);
+}
+
+body {
+  background: var(--bg-0);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--accent);
+  color: #0a0a0a;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-0);
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2c34;
+  border-radius: 10px;
+  border: 2px solid var(--bg-0);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3f424d;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+h1, h2, h3, h4 {
+  font-weight: 600;
+}
+
+/* 版心容器 */
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--pad-x);
+}
+
+/* 区块通用留白 */
+.section {
+  position: relative;
+  padding-block: 170px;
+}
+
+/* 小标签 / 眉题 */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+.eyebrow .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow);
+  flex: none;
+}
+
+/* 区块标题组 */
+.section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 40px;
+  margin-bottom: 80px;
+}
+.section-head__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: none;
+  padding-top: 8px;
+}
+.section-head__index {
+  font-family: var(--font-display);
+  font-size: 14px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+.section-head__title {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 4.4vw, 76px);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  white-space: pre-line;
+}
+.section-head__desc {
+  max-width: 420px;
+  color: var(--text-soft);
+  font-size: 16px;
+  line-height: 1.8;
+  padding-top: 10px;
+}
+
+/* 主按钮 */
+.btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 54px;
+  padding-inline: 30px;
+  border-radius: 100px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: transform 0.4s var(--ease-out), background 0.4s var(--ease-out),
+    box-shadow 0.4s var(--ease-out), color 0.4s var(--ease-out),
+    border-color 0.4s var(--ease-out);
+  white-space: nowrap;
+  will-change: transform;
+}
+.btn svg {
+  position: relative;
+  z-index: 2;
+  width: 17px;
+  height: 17px;
+  transition: transform 0.45s var(--ease-out);
+}
+.btn:hover svg {
+  transform: translate(4px, -4px) scale(1.08);
+}
+
+/* 扫光高光 —— 悬浮时从左掠过主按钮 */
+.btn--primary::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 55%;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.32),
+    transparent
+  );
+  transform: translateX(-240%) skewX(-18deg);
+  transition: transform 0.8s var(--ease-out);
+}
+.btn--primary:hover::after {
+  transform: translateX(280%) skewX(-18deg);
+}
+.btn--primary {
+  background: var(--accent);
+  color: #14100e;
+  box-shadow: 0 8px 30px -10px var(--accent-glow);
+}
+.btn--primary:hover {
+  background: var(--accent-2);
+  transform: translateY(-4px);
+  box-shadow: 0 18px 44px -10px var(--accent-glow),
+    0 0 0 1px rgba(155, 124, 255, 0.35);
+}
+
+/* 幽灵按钮 —— 紫色渐变从左向右展开填充 */
+.btn--ghost::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    120deg,
+    rgba(155, 124, 255, 0.24),
+    rgba(155, 124, 255, 0.05)
+  );
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 0.5s var(--ease-out);
+}
+.btn--ghost:hover::before {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+.btn--ghost {
+  border: 1px solid var(--line-strong);
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.02);
+}
+.btn--ghost:hover {
+  border-color: var(--accent);
+  color: #fff;
+  transform: translateY(-4px);
+  box-shadow: 0 14px 34px -14px var(--accent-glow);
+}
+
+/* 按下回弹反馈（置于最后以覆盖 hover 位移） */
+.btn:active {
+  transform: translateY(-1px) scale(0.96);
+  transition-duration: 0.12s;
+}
+
+/* 细线分隔 */
+.hr {
+  height: 1px;
+  background: var(--line);
+  width: 100%;
+}
+
+/* 滚动显现动画
+   默认可见（opacity:1）——保证 JS 检测失效时内容依然显示。
+   is-visible 时播放一次入场动画，纯 CSS 完成，不依赖 transition 状态。 */
+.reveal {
+  opacity: 1;
+  transform: none;
+}
+.reveal.is-visible {
+  animation: revealIn 0.8s var(--ease-out) both;
+}
+@keyframes revealIn {
+  from {
+    opacity: 0;
+    transform: translateY(38px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 顶部细进度条 */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  z-index: 200;
+  width: 0;
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+@media (max-width: 1200px) {
+  :root {
+    --pad-x: 40px;
+  }
+  .section {
+    padding-block: 120px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .case-gallery__shot {
+    animation: none !important;
+  }
+}
+
+/* ============================================================
+   GSAP 接管：关闭原生 CSS 进场动画，避免与 GSAP 双重播放。
+   注意：这里只关 animation，不设 opacity:0 —— 元素的初始隐藏
+   由 gsap.from() 在首帧绘制前（useLayoutEffect）完成；一旦 GSAP
+   未运行，元素保持默认可见，绝不会出现空白。
+   ============================================================ */
+html.gsap-ready .reveal.is-visible { animation: none; }
+html.gsap-ready .hero__eyebrow,
+html.gsap-ready .hero__subtitle,
+html.gsap-ready .hero__cta { animation: none; }
+html.gsap-ready .hero__line > span { animation: none; }

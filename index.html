@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="洪英琦 — 视觉设计师 / UX 设计师 / UI 设计师。专注视觉、体验与界面的数字设计作品集。" />
+    <meta name="theme-color" content="#07080b" />
+    <title>洪英琦 — 视觉 / UX / UI 设计师 | Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- 字体异步加载，不阻塞首屏渲染；加载完成后切换 media 生效 -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    </noscript>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <!-- 兜底：即使显现检测未运行，也保证所有区块最终可见 -->
+    <script>
+      (function () {
+        function revealAll() {
+          // GSAP 已接管进场动画时跳过：元素默认可见，初始态与播放由 GSAP 控制，
+          // 这里的 class 干预反而可能与 gsap.from 冲突。
+          if (document.documentElement.classList.contains('gsap-ready')) return;
+          document.querySelectorAll('.reveal').forEach(function (el) {
+            if (!el.classList.contains('is-visible')) el.classList.add('is-visible');
+          });
+        }
+        window.addEventListener('load', function () { setTimeout(revealAll, 1200); });
+        setTimeout(revealAll, 3000);
+      })();
+    </script>
+  </body>
+</html>
