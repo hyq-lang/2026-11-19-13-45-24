@@ -1,4 +1,5 @@
 import { site } from '../data';
+import { onImgError } from '../imgFallback';
 import Reveal from './Reveal';
 import SpecularCard from './SpecularCard';
 import { ArrowUpRight } from './Icons';
@@ -52,6 +53,7 @@ export default function About() {
                       alt={`${site.nameZh} 的证件照`}
                       loading="lazy"
                       decoding="async"
+                      onError={onImgError}
                     />
                   </picture>
                   <div className="portrait__scan" />

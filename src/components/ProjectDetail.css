@@ -1,0 +1,564 @@
+/* ============================================================
+   PROJECT DETAIL — 详情页视觉、分进入场、滚动动效、章节导航
+   风格延续站点暗色 / 紫色 / 克制科技感，不引入新视觉语言。
+   ============================================================ */
+
+.detail {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: var(--bg-0);
+  overflow: hidden;
+}
+
+/* ---------- 阅读进度条（内部滚动驱动） ---------- */
+.detail__progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.05);
+}
+.detail__progress span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.detail__topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  height: 78px;
+  padding-inline: var(--pad-x);
+  background: linear-gradient(180deg, rgba(7, 8, 12, 0.92), rgba(7, 8, 12, 0));
+}
+.detail__back,
+.detail__back-big {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--text-soft);
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  padding: 10px 18px;
+  background: rgba(255, 255, 255, 0.03);
+  transition: color 0.26s var(--ease-out), border-color 0.26s var(--ease-out),
+    background 0.26s var(--ease-out), transform 0.26s var(--ease-out);
+}
+.detail__back:hover,
+.detail__back-big:hover {
+  color: #fff;
+  border-color: var(--accent);
+  background: rgba(155, 124, 255, 0.1);
+  transform: translateY(-2px);
+}
+.detail__topno {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: var(--text-muted);
+}
+
+/* ---------- 章节导航：PC 固定侧边 ---------- */
+.detail__chapters {
+  position: absolute;
+  top: 50%;
+  right: 22px;
+  z-index: 6;
+  width: 196px;
+  max-height: 74vh;
+  transform: translateY(-50%);
+  padding: 18px 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(11, 12, 17, 0.78);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.detail__chapters-label {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--text-muted);
+  padding: 2px 8px 12px;
+}
+.detail__chapters-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.detail__chapter {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border-left: 2px solid transparent;
+  color: var(--text-muted);
+  transition: color 0.26s var(--ease-out), background 0.26s var(--ease-out),
+    border-color 0.26s var(--ease-out);
+}
+.detail__chapter-no {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  flex: none;
+}
+.detail__chapter-label {
+  font-size: 12px;
+  line-height: 1.45;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.detail__chapter:hover { color: var(--text); background: var(--surface); }
+.detail__chapter.is-active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: rgba(155, 124, 255, 0.1);
+}
+.detail__chapter.is-active .detail__chapter-no { color: var(--accent); }
+
+/* 正文为侧边导航留出空间，避免遮挡 */
+@media (min-width: 1280px) {
+  .detail__content { padding-right: calc(var(--pad-x) + 220px); }
+}
+
+.detail__scroll {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 主视觉：共享元素终点 */
+.detail__hero {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2.05;
+  max-height: 78vh;
+  overflow: hidden;
+  background: var(--bg-2);
+}
+.detail__hero-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  view-transition-name: project-hero;
+}
+.detail__hero-veil {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(7, 8, 12, 0.28) 0%, transparent 38%, rgba(7, 8, 12, 0.92) 100%);
+}
+
+.detail__content {
+  padding-bottom: 120px;
+}
+
+.detail__intro-block {
+  position: relative;
+  margin-top: -64px;
+  z-index: 2;
+  padding-bottom: 70px;
+  border-bottom: 1px solid var(--line);
+  scroll-margin-top: 110px;
+}
+.detail__no {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 15px;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  margin-bottom: 18px;
+}
+.detail__title {
+  font-family: var(--font-display);
+  font-size: clamp(38px, 5.2vw, 88px);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.06;
+}
+.detail__category {
+  margin-top: 20px;
+  font-size: 17px;
+  color: var(--text-soft);
+  letter-spacing: 0.02em;
+}
+.detail__desc {
+  margin-top: 12px;
+  max-width: 720px;
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--text-muted);
+}
+.detail__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 30px;
+}
+.detail__year,
+.detail__count {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+.detail__count::before {
+  content: '·';
+  margin-right: 10px;
+  color: var(--line-strong);
+}
+.detail__tag {
+  padding: 6px 14px;
+  border-radius: 100px;
+  border: 1px solid var(--line);
+  font-family: var(--font-display);
+  font-size: 11px;
+  color: var(--text-soft);
+}
+
+/* ---------- 作品画廊 ---------- */
+.detail__gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  padding-top: 60px;
+}
+.detail__shot {
+  position: relative;
+  margin: 0;
+  padding-block: 14px; /* 视差位移留白，保证原图不被裁切 */
+  scroll-margin-top: 110px;
+}
+.detail__shot-open {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg-2);
+  cursor: zoom-in;
+  transition: border-color 0.32s var(--ease-out), transform 0.32s var(--ease-out),
+    box-shadow 0.32s var(--ease-out);
+}
+.detail__shot-open:hover {
+  border-color: var(--line-strong);
+  box-shadow: 0 18px 50px -24px rgba(0, 0, 0, 0.7);
+}
+/* 加载占位：轻微流动微光，图片就绪后由图片覆盖 */
+.detail__shot-open::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, var(--bg-2) 20%, rgba(155, 124, 255, 0.06) 45%, var(--bg-2) 70%);
+  background-size: 220% 100%;
+  animation: shotSkeleton 1.4s linear infinite;
+}
+@keyframes shotSkeleton {
+  from { background-position: 180% 0; }
+  to { background-position: -80% 0; }
+}
+.detail__shot-img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: auto; /* 保持原始比例，不压缩不裁切 */
+  /* 作品图均为 1920×1080（16:9）：加载前按此比例预留高度，
+     避免懒加载图片撑开页面导致滚动位置跳动、进度条失真。加载后按自然尺寸渲染。 */
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  opacity: 0;
+  transform: translate3d(0, var(--parallax, 0px), 0);
+  transition: opacity 0.45s var(--ease-out);
+  will-change: transform;
+}
+.detail__shot-img.is-loaded { opacity: 1; }
+.detail__shot-zoom {
+  position: absolute;
+  z-index: 2;
+  top: 14px;
+  right: 16px;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(7, 8, 12, 0.72);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(8px);
+  color: rgba(255, 255, 255, 0.82);
+  opacity: 0;
+  transform: scale(0.86);
+  transition: opacity 0.28s var(--ease-out), transform 0.28s var(--ease-out),
+    color 0.28s var(--ease-out), border-color 0.28s var(--ease-out);
+}
+.detail__shot-zoom svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+.detail__shot-open:hover .detail__shot-zoom {
+  opacity: 1;
+  transform: scale(1);
+}
+.detail__shot-open:hover .detail__shot-zoom:hover {
+  color: #fff;
+  border-color: var(--accent);
+}
+.detail__shot figcaption {
+  position: absolute;
+  top: 26px;
+  left: 16px;
+  z-index: 2;
+  padding: 6px 12px;
+  border-radius: 100px;
+  background: rgba(7, 8, 12, 0.72);
+  backdrop-filter: blur(8px);
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* ---------- 滚动入场：默认可见，JS 就绪后统一从隐藏渐入（once） ---------- */
+html.detail-io-ready .detail__reveal {
+  opacity: 0;
+  transform: translateY(26px);
+}
+html.detail-io-ready .detail__reveal.is-in {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.42s var(--ease-out), transform 0.42s var(--ease-out);
+  transition-delay: var(--reveal-delay, 0s);
+}
+/* 轻微错位节奏：同一屏内相邻模块错开，克制不花哨 */
+.detail__gallery .detail__shot:nth-child(2n) { --reveal-delay: 0.05s; }
+.detail__gallery .detail__shot:nth-child(3n) { --reveal-delay: 0.09s; }
+.detail__foot { --reveal-delay: 0.08s; }
+
+/* ---------- 底部项目切换 ---------- */
+.detail__foot {
+  display: block;
+  padding-top: 80px;
+}
+.detail__switch {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: stretch;
+  gap: 16px;
+  padding-top: 40px;
+  border-top: 1px solid var(--line);
+}
+.detail__switch-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+  padding: 20px 22px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  transition: border-color 0.3s var(--ease-out), background 0.3s var(--ease-out),
+    transform 0.3s var(--ease-out);
+}
+.detail__switch-btn--next { text-align: right; align-items: flex-end; }
+.detail__switch-btn:hover {
+  border-color: var(--accent);
+  background: rgba(155, 124, 255, 0.08);
+  transform: translateY(-3px);
+}
+.detail__switch-dir {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+.detail__switch-name {
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.4;
+}
+.detail__switch-all {
+  align-self: center;
+  padding: 14px 22px;
+  border: 1px solid var(--line-strong);
+  border-radius: 100px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--text-soft);
+  transition: color 0.3s var(--ease-out), border-color 0.3s var(--ease-out),
+    background 0.3s var(--ease-out), transform 0.3s var(--ease-out);
+}
+.detail__switch-all:hover {
+  color: #fff;
+  border-color: var(--accent);
+  background: rgba(155, 124, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+/* ---------- 分进入场：标题 / 分类 / 介绍 / 元信息 ---------- */
+.detail__no,
+.detail__title,
+.detail__category,
+.detail__desc,
+.detail__meta {
+  animation: detailRise 0.38s var(--ease-out) both;
+}
+.detail__no { animation-delay: 0.34s; }
+.detail__title { animation-delay: 0.40s; }
+.detail__category { animation-delay: 0.48s; }
+.detail__desc { animation-delay: 0.54s; }
+.detail__meta { animation-delay: 0.60s; }
+@keyframes detailRise {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- 退出转场：内容淡出（主视觉不淡出，交给共享元素 / 克隆回缩） ---- */
+.detail--exiting {
+  pointer-events: none;
+}
+.detail--exiting .detail__topbar,
+.detail--exiting .detail__chapters,
+.detail--exiting .detail__intro-block,
+.detail--exiting .detail__gallery,
+.detail--exiting .detail__foot {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.22s var(--ease-out), transform 0.22s var(--ease-out);
+}
+
+/* FLIP 克隆飞行层 */
+.flip-hero {
+  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.7);
+}
+
+/* ---------- View Transitions 时序与共享元素 ---------- */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+::view-transition-group(project-hero) {
+  animation-duration: 0.52s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 999;
+}
+::view-transition-old(project-hero),
+::view-transition-new(project-hero) {
+  object-fit: cover;
+  height: 100%;
+  animation-duration: 0.52s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ---------- 移动端：顶部横向可滑动章节导航 ---------- */
+@media (max-width: 1279px) {
+  .detail__chapters {
+    position: absolute;
+    top: 78px;
+    left: 0;
+    right: 0;
+    width: auto;
+    max-height: none;
+    transform: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    border-radius: 0;
+    border-inline: 0;
+    border-top: 0;
+    background: rgba(11, 12, 17, 0.88);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+  }
+  .detail__chapters::-webkit-scrollbar { display: none; }
+  .detail__chapters-label { display: none; }
+  .detail__chapters-list { flex-direction: row; gap: 6px; }
+  .detail__chapter {
+    width: auto;
+    flex: none;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border-left: 0;
+    border-bottom: 2px solid transparent;
+    border-radius: 100px;
+  }
+  .detail__chapter.is-active { border-left-color: transparent; border-bottom-color: var(--accent); }
+  .detail__chapter-label { max-width: 150px; }
+  .detail__intro-block,
+  .detail__shot { scroll-margin-top: 148px; }
+  .detail__switch { grid-template-columns: 1fr; }
+  .detail__switch-all { order: 3; justify-self: center; }
+}
+
+@media (max-width: 820px) {
+  .detail__hero { aspect-ratio: 1.5; max-height: 62vh; }
+  .detail__intro-block { margin-top: -40px; }
+  .detail__scroll { overscroll-behavior: contain; }
+  .detail__title { font-size: clamp(34px, 8vw, 52px); }
+}
+
+/* ---------- 减少动效：全部即时可见，仅保留必要反馈 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .detail__shot,
+  .detail__no,
+  .detail__title,
+  .detail__category,
+  .detail__desc,
+  .detail__meta,
+  .detail__reveal,
+  html.detail-io-ready .detail__reveal {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .detail__shot-img {
+    transform: none !important;
+    transition: none !important;
+  }
+  .detail__shot-open::before { animation: none; }
+  .detail__back,
+  .detail__back-big,
+  .detail__switch-btn,
+  .detail__switch-all,
+  .detail__chapter { transition: none; }
+}

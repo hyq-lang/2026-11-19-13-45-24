@@ -54,6 +54,12 @@ html {
   scrollbar-color: #3a3d47 var(--bg-0);
 }
 
+/* 详情页打开时锁定主页滚动；详情页内部 .detail__scroll 自行滚动。
+   用 overflow:hidden 而非 position:fixed，避免布局跳动与共享元素坐标错位。 */
+body.detail-lock {
+  overflow: hidden;
+}
+
 body {
   background: var(--bg-0);
   color: var(--text);
@@ -86,6 +92,13 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+  /* 链接即可点击元素，光标语义统一；href 缺省的占位链接除外 */
+  cursor: pointer;
+}
+/* 无 href 的 <a> 不具备跳转功能，不应表现得像链接（避免看起来可点却无响应） */
+a:not([href]) {
+  cursor: default;
+  pointer-events: none;
 }
 
 button {
@@ -94,11 +107,45 @@ button {
   background: none;
   cursor: pointer;
   color: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+/* 禁用态：不可操作元素有明确视觉，且不接收指针事件 */
+button:disabled,
+a[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------
+   统一键盘焦点环：仅键盘（Tab）导航时显示，鼠标点击不显示，
+   兼顾可访问性与视觉克制。accent 紫色细环 + 柔和外发光。
+   ------------------------------------------------------------------ */
+:where(a, button, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+/* 主按钮为胶囊形，焦点环贴合其圆角 */
+a.btn:focus-visible,
+button.btn:focus-visible {
+  border-radius: 100px;
 }
 
 img {
   display: block;
   max-width: 100%;
+}
+
+/* 图片降级占位：封面/主视觉类保持填满裁切，避免破坏原布局比例 */
+img.img--fallback {
+  object-fit: cover;
+  background: var(--bg-2);
+}
+/* 画廊与灯箱的占位需保持 contain，不裁切（与原图展示规则一致） */
+img.detail__shot-img.img--fallback,
+img.lightbox__image.img--fallback {
+  object-fit: contain;
 }
 
 h1, h2, h3, h4 {
@@ -117,6 +164,20 @@ h1, h2, h3, h4 {
 .section {
   position: relative;
   padding-block: 170px;
+}
+
+/* 锚点定位补偿：固定导航（滚动态约 70px）会遮挡跳转目标标题，
+   统一给带 id 的区块留出滚动边距，确保 href="#..." 跳转后标题完整可见。 */
+#about,
+#experience,
+#work,
+#strengths,
+#contact {
+  scroll-margin-top: 88px;
+}
+/* Hero 顶部锚点无需偏移，回顶应贴齐视口顶部 */
+#top {
+  scroll-margin-top: 0;
 }
 
 /* 小标签 / 眉题 */
@@ -340,6 +401,28 @@ h1, h2, h3, h4 {
   }
   .case-gallery__shot {
     animation: none !important;
+  }
+  /* 卡片悬停位移在减少动效时停用，保留颜色反馈 */
+  .project,
+  .project:hover {
+    transform: none;
+    transition: none;
+  }
+  .project__cover,
+  .project:hover .project__cover {
+    transform: none;
+    transition: none;
+  }
+  .project__title,
+  .project:hover .project__title {
+    transform: none;
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  ::view-transition-group(project-hero),
+  ::view-transition-old(project-hero),
+  ::view-transition-new(project-hero) {
+    animation-duration: 0.01ms !important;
   }
 }
 

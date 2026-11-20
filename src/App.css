@@ -87,15 +87,19 @@
 }
 .nav__links a {
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  /* 扩大垂直点击区域，避免细文字误触；不改变视觉排版 */
+  padding-block: 10px;
   font-size: 14px;
   color: var(--text-soft);
-  transition: color 0.3s;
+  transition: color 0.3s var(--ease-out);
 }
 .nav__links a::after {
   content: '';
   position: absolute;
   left: 0;
-  bottom: -6px;
+  bottom: 2px;
   width: 0;
   height: 1px;
   background: var(--accent);
@@ -106,6 +110,17 @@
 }
 .nav__links a:hover::after {
   width: 100%;
+}
+/* 当前所在栏目：高亮文字 + 保持下划线常驻，滚动时平滑切换 */
+.nav__links a.is-active {
+  color: var(--accent-2);
+}
+.nav__links a.is-active::after {
+  width: 100%;
+}
+.nav__links a:active {
+  color: var(--accent);
+  transition-duration: 0.12s;
 }
 .nav__actions {
   display: flex;
@@ -288,6 +303,13 @@ main { position: relative; z-index: 1; }
   font-size: 11px;
   letter-spacing: 0.2em;
   color: var(--text-muted);
+  transition: color 0.3s var(--ease-out);
+}
+.hero__scroll:hover { color: var(--text); }
+.hero__scroll:active { color: var(--accent); transition-duration: 0.12s; }
+.hero__scroll:hover .hero__scroll-icon {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 .hero__scroll-icon {
   display: grid;
@@ -298,6 +320,7 @@ main { position: relative; z-index: 1; }
   border-radius: 50%;
   color: var(--text-soft);
   animation: bob 2.2s ease-in-out infinite;
+  transition: border-color 0.3s var(--ease-out), color 0.3s var(--ease-out);
 }
 .hero__scroll-icon svg { width: 14px; height: 14px; }
 .hero__avail {
@@ -563,6 +586,7 @@ main { position: relative; z-index: 1; }
 .about__contact-val--link svg { width: 15px; height: 15px; color: var(--text-muted); }
 .about__contact-val--link:hover { color: var(--accent); }
 .about__contact-val--link:hover svg { color: var(--accent); }
+.about__contact-val--link:active { color: var(--accent-2); transition-duration: 0.12s; }
 
 /* 数据卡片 —— 4 张独立卡片，紧跟「人物 + 介绍」区组成整体 */
 .stats {
@@ -660,8 +684,10 @@ main { position: relative; z-index: 1; }
   padding: 22px 4px 24px 20px;
   text-align: left;
   border-bottom: 1px solid var(--line);
-  transition: background 0.3s;
+  transition: background 0.3s var(--ease-out), padding-left 0.3s var(--ease-out);
 }
+.tl-head:hover { background: var(--surface); }
+.tl-head:active { background: var(--surface-hover); transition-duration: 0.12s; }
 .tl-head__main { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .tl-type {
   font-family: var(--font-display);
@@ -710,7 +736,15 @@ main { position: relative; z-index: 1; }
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 72px 40px;
 }
-.project { display: block; }
+.project {
+  display: block;
+  /* 悬停时轻微层级变化：整卡缓慢抬起 + 阴影加深，克制不夸张 */
+  transition: transform 0.3s var(--ease-out);
+  will-change: transform;
+}
+.project:hover {
+  transform: translateY(-6px);
+}
 .project__media {
   position: relative;
   aspect-ratio: 1.42;
@@ -718,6 +752,12 @@ main { position: relative; z-index: 1; }
   overflow: hidden;
   border: 1px solid var(--line);
   background: var(--bg-2);
+  transition: box-shadow 0.3s var(--ease-out), border-color 0.3s var(--ease-out);
+}
+.project:hover .project__media {
+  box-shadow: 0 26px 60px -28px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(155, 124, 255, 0.18);
+  border-color: rgba(155, 124, 255, 0.32);
 }
 .project__media .art {
   width: 100%;
@@ -773,9 +813,13 @@ main { position: relative; z-index: 1; }
   font-size: 24px;
   font-weight: 600;
   letter-spacing: -0.02em;
-  transition: color 0.3s;
+  /* 细微位移 + 变色，离开时平滑归位 */
+  transition: color 0.3s var(--ease-out), transform 0.3s var(--ease-out);
 }
-.project:hover .project__title { color: var(--accent); }
+.project:hover .project__title {
+  color: var(--accent);
+  transform: translateX(5px);
+}
 .project__category { display: block; margin-top: 6px; font-size: 13px; color: var(--text-muted); }
 .project__right { display: flex; flex-direction: column; align-items: flex-end; gap: 14px; }
 .project__tags { display: flex; gap: 7px; }
@@ -807,9 +851,10 @@ main { position: relative; z-index: 1; }
   height: 100%;
   object-fit: cover;
   object-position: center;
-  transition: transform 0.9s var(--ease-out);
+  /* 悬停放大至 1.03 倍，180~300ms 内平滑恢复 */
+  transition: transform 0.28s var(--ease-out);
 }
-.project:hover .project__cover { transform: scale(1.05); }
+.project:hover .project__cover { transform: scale(1.03); }
 .project__count {
   position: absolute;
   right: 20px;
@@ -1178,7 +1223,9 @@ main { position: relative; z-index: 1; }
   letter-spacing: 0.1em;
   color: var(--text-muted);
 }
+.contact__footer a { transition: color 0.3s var(--ease-out); }
 .contact__footer a:hover { color: var(--accent); }
+.contact__footer a:active { color: var(--accent-2); transition-duration: 0.12s; }
 .contact__made { display: inline-flex; align-items: center; gap: 10px; }
 .contact__made i { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
 

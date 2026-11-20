@@ -1,4 +1,5 @@
 import { site } from '../data';
+import { scrollToTop } from '../scroll';
 import Reveal from './Reveal';
 import { ArrowUpRight } from './Icons';
 
@@ -44,7 +45,7 @@ export default function Contact() {
       <div className="container contact__footer">
         <span>{contact.footerNote}</span>
         <span className="contact__made">{contact.madeWith} <i /></span>
-        <a href="#top">BACK TO TOP ↑</a>
+        <a href="#top" onClick={(e) => { e.preventDefault(); scrollToTop(); }}>BACK TO TOP ↑</a>
       </div>
     </section>
   );

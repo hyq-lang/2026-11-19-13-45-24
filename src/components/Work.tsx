@@ -1,12 +1,31 @@
-import { useState } from 'react';
+import { useCallback, useRef } from 'react';
 import { site } from '../data';
+import { onImgError } from '../imgFallback';
 import Reveal from './Reveal';
-import { ArrowUpRight, ArrowDown } from './Icons';
+import { ArrowUpRight } from './Icons';
 
-export default function Work() {
+type Project = (typeof site.work.projects)[number];
+
+interface Props {
+  onOpen: (project: Project, source: HTMLElement | null) => void;
+}
+
+export default function Work({ onOpen }: Props) {
   const { work } = site;
-  // 当前展开的项目 id（同一时间只展开一个）
-  const [openId, setOpenId] = useState<string | null>(null);
+  // 记录每张卡片的封面元素，作为共享元素转场的起点
+  const sourceRefs = useRef<Record<string, HTMLElement | null>>({});
+
+  const handleOpen = useCallback(
+    (p: Project) => {
+      // 把被点击卡片的封面元素交给 App，由 App 编排共享元素转场
+      onOpen(p, sourceRefs.current[p.id] ?? null);
+    },
+    [onOpen],
+  );
+
+  const goContact = useCallback(() => {
+    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
 
   return (
     <section className="section work" id="work">
@@ -22,41 +41,37 @@ export default function Work() {
 
         <div className="work__grid">
           {work.projects.map((p, i) => {
-            // 带 cover/gallery 的项目走真实作品画廊，其余项目走原有抽象视觉
             const gallery = 'gallery' in p ? p.gallery : undefined;
             const cover = 'cover' in p ? p.cover : undefined;
-            const isOpen = openId === p.id;
             const hasGallery = !!gallery?.length;
-
-            const goContact = () => {
-              document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
-            };
+            const hasCover = !!cover;
 
             return (
-              <Reveal key={p.id} delay={(i % 2) * 90} className={isOpen ? 'work__item--open' : ''}>
-                <article className={`project ${isOpen ? 'project--open' : ''}`}>
+              <Reveal key={p.id} delay={(i % 2) * 90}>
+                <article className="project">
                   <button
                     type="button"
                     className="project__trigger"
-                    onClick={hasGallery ? () => setOpenId(isOpen ? null : p.id) : goContact}
-                    aria-label={hasGallery ? `${isOpen ? '收起' : '查看'}项目：${p.title}` : `查看项目：${p.title}`}
-                    {...(hasGallery ? { 'aria-expanded': isOpen } : {})}
+                    onClick={() => (hasCover && hasGallery ? handleOpen(p) : goContact())}
+                    aria-label={`查看项目：${p.title}`}
                   >
                     <div className="project__media">
                       {cover ? (
                         <img
+                          ref={(el) => { sourceRefs.current[p.id] = el; }}
+                          data-project-source={p.id}
                           className="project__cover"
                           src={cover}
                           alt={p.title}
                           loading={i === 0 ? 'eager' : 'lazy'}
+                          onError={onImgError}
                         />
                       ) : (
                         <ProjectArt kind={p.art} />
                       )}
                       <div className="project__overlay">
                         <span className="project__view">
-                          {hasGallery ? (isOpen ? '收起作品' : '查看作品') : 'VIEW CASE'}
-                          {hasGallery ? <ArrowDown /> : <ArrowUpRight />}
+                          查看作品 <ArrowUpRight />
                         </span>
                       </div>
                       <span className="project__no">{p.id}</span>
@@ -77,36 +92,6 @@ export default function Work() {
                       </div>
                     </div>
                   </button>
-
-                  {/* 内联展开的作品画廊：展开时才挂载图片，避免未展开时加载 17 张大图 */}
-                  {hasGallery && isOpen ? (
-                    <div className="case-gallery">
-                      <div className="case-gallery__bar">
-                        <span className="case-gallery__label">CASE STUDY — {gallery!.length} IMAGES</span>
-                        <button
-                          type="button"
-                          className="case-gallery__close"
-                          onClick={() => setOpenId(null)}
-                        >
-                          收起 <ArrowUpRight />
-                        </button>
-                      </div>
-                      <div className="case-gallery__list">
-                        {gallery!.map((g, gi) => (
-                          <figure
-                            className="case-gallery__shot"
-                            key={g.src}
-                            style={{ animationDelay: `${Math.min(gi, 12) * 0.06}s` }}
-                          >
-                            <img src={g.src} alt={g.alt} loading="lazy" decoding="async" />
-                            <figcaption>
-                              {String(gi + 1).padStart(2, '0')} / {String(gallery!.length).padStart(2, '0')}
-                            </figcaption>
-                          </figure>
-                        ))}
-                      </div>
-                    </div>
-                  ) : null}
                 </article>
               </Reveal>
             );
